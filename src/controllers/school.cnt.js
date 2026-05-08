@@ -80,4 +80,8 @@ const listSchools = async (req, res, next) => {
     next(error);
   }
 };
-export { addSchool, listSchools };
+
+const ping = (req, res) => {
+  res.send("ok");
+};
+export { addSchool, listSchools, ping };
