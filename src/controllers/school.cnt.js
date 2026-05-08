@@ -1,3 +1,4 @@
+import haversineDistanceCalculate from "../utils/functions/haversine.func.js";
 import { prisma } from "../utils/prisma.js";
 
 const addSchool = async (req, res, next) => {
@@ -44,4 +45,39 @@ const addSchool = async (req, res, next) => {
     next(error);
   }
 };
-export { addSchool };
+
+const listSchools = async (req, res, next) => {
+  try {
+    const { latitude, longitude } = req.query;
+    const userLat = parseFloat(latitude);
+    const userLon = parseFloat(longitude);
+
+    const allschools = await prisma.school.findMany();
+
+    //calculate the distance for each school
+    const schoolWithDistance = allschools.map((school) => {
+      const distance = haversineDistanceCalculate(
+        userLat,
+        userLon,
+        school.latitude,
+        school.longitude,
+      );
+
+      return {
+        ...school,
+        distance: parseFloat(distance.toFixed(2)),
+      };
+    });
+
+    //sort according to the distance
+    schoolWithDistance.sort((a, b) => a.distance - b.distance);
+    res.status(200).send({
+      success: true,
+      message: "fetched data",
+      data: schoolWithDistance,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export { addSchool, listSchools };
