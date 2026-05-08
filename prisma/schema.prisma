@@ -1,0 +1,18 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model School {
+  id        Int     @id @default(autoincrement())
+  name      String
+  address   String
+  latitude  Decimal
+  longitude Decimal
+
+  @@map("schools")
+}
